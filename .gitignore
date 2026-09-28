@@ -1,0 +1,17 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+*.log
+.env
+.env*.local
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# OneDrive / Office temp
+~$*
+*.tmp
