@@ -20,15 +20,14 @@ Full spec: see [PRD.md](./PRD.md).
 
 Customer, Fashion Consultant, Production Staff, Quality Control, Administrator, Organisation Manager.
 
-## Stack (planned)
+## Stack
 
-Next.js App Router + TypeScript + Tailwind + Supabase (auth, DB, storage).
+Next.js 16 App Router + TypeScript + Tailwind (`web/`), Supabase planned (auth, DB, storage).
 
 ## Dev
 
 ```powershell
-git pull
-git add .
-git commit -m "describe change"
-git push
+cd web
+npm.cmd run dev
+npm.cmd run build
 ```
