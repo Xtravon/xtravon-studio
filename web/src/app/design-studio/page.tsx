@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import {
+  Button,
+  FileUpload,
+  Input,
+  RadioCard,
+  Select,
+  Textarea,
+} from "@/components/ui";
 import { saveProject, type StartMode } from "@/lib/projects";
 
 const templates = [
@@ -43,10 +50,6 @@ const sleeves = ["Short", "Long", "Three-quarter", "Sleeveless"];
 const necklines = ["Round", "V-neck", "Collar", "Mandarin", "Boat", "Off-shoulder"];
 const lengths = ["Short", "Regular", "Long", "Extra-long"];
 
-const inputCls =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950";
-const labelCls = "block text-sm font-medium";
-
 export default function DesignStudioPage() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -64,18 +67,6 @@ export default function DesignStudioPage() {
   const [inspirationName, setInspirationName] = useState("");
   const [inspirationDataUrl, setInspirationDataUrl] = useState("");
   const [error, setError] = useState("");
-
-  function onFile(file: File | undefined) {
-    if (!file) return;
-    setInspirationName(file.name);
-    if (file.size > 1_500_000) {
-      setInspirationDataUrl("");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => setInspirationDataUrl(String(reader.result ?? ""));
-    reader.readAsDataURL(file);
-  }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -114,21 +105,19 @@ export default function DesignStudioPage() {
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-6">
-        <div>
-          <label className={labelCls} htmlFor="name">
-            Design name
-          </label>
-          <input
-            id="name"
-            className={inputCls}
-            placeholder="Wedding Outfit — Oba"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Design name"
+          id="name"
+          placeholder="Wedding Outfit — Oba"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={error}
+        />
 
         <fieldset>
-          <legend className={labelCls}>How do you want to start?</legend>
+          <legend className="block text-sm font-medium">
+            How do you want to start?
+          </legend>
           <div className="mt-2 grid gap-3 sm:grid-cols-3">
             {(
               [
@@ -137,215 +126,115 @@ export default function DesignStudioPage() {
                 ["inspiration", "Upload inspiration"],
               ] as [StartMode, string][]
             ).map(([mode, label]) => (
-              <label
+              <RadioCard
                 key={mode}
-                className={`cursor-pointer rounded-xl border p-4 text-sm font-medium ${
-                  startMode === mode
-                    ? "border-zinc-950 bg-zinc-100 dark:border-zinc-50 dark:bg-zinc-900"
-                    : "border-zinc-300 dark:border-zinc-700"
-                }`}
-              >
-                <input
-                  type="radio"
-                  className="mr-2"
-                  checked={startMode === mode}
-                  onChange={() => setStartMode(mode)}
-                />
-                {label}
-              </label>
+                name="start-mode"
+                value={mode}
+                checked={startMode === mode}
+                label={label}
+                onChange={setStartMode}
+              />
             ))}
           </div>
         </fieldset>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls} htmlFor="template">
-              Template
-            </label>
-            <select
-              id="template"
-              className={inputCls}
-              value={template}
-              onChange={(e) => setTemplate(e.target.value)}
-            >
-              {templates.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelCls} htmlFor="garment">
-              Garment type
-            </label>
-            <select
-              id="garment"
-              className={inputCls}
-              value={garmentType}
-              onChange={(e) => setGarmentType(e.target.value)}
-            >
-              {garmentTypes.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className={labelCls} htmlFor="inspiration">
-            Inspiration image (optional)
-          </label>
-          <input
-            id="inspiration"
-            type="file"
-            accept="image/*"
-            className="mt-2 text-sm"
-            onChange={(e) => onFile(e.target.files?.[0])}
+          <Select
+            label="Template"
+            id="template"
+            options={templates}
+            value={template}
+            onChange={(e) => setTemplate(e.target.value)}
           />
-          {inspirationName && (
-            <p className="mt-2 text-sm text-zinc-500">
-              {inspirationName}
-              {inspirationDataUrl ? "" : " (preview not stored — file over 1.5MB)"}
-            </p>
-          )}
-          {inspirationDataUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={inspirationDataUrl}
-              alt="Inspiration preview"
-              className="mt-3 max-h-48 rounded-lg border"
-            />
-          )}
-        </div>
-
-        <div>
-          <label className={labelCls} htmlFor="description">
-            Describe what you want
-          </label>
-          <textarea
-            id="description"
-            rows={4}
-            className={inputCls}
-            placeholder="Navy blue agbada with gold embroidery for a wedding..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+          <Select
+            label="Garment type"
+            id="garment"
+            options={garmentTypes}
+            value={garmentType}
+            onChange={(e) => setGarmentType(e.target.value)}
           />
         </div>
+
+        <FileUpload
+          label="Inspiration image (optional)"
+          onFile={({ name, dataUrl }) => {
+            setInspirationName(name);
+            setInspirationDataUrl(dataUrl);
+          }}
+        />
+
+        <Textarea
+          label="Describe what you want"
+          id="description"
+          rows={4}
+          placeholder="Navy blue agbada with gold embroidery for a wedding..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label="Fabric"
+            id="fabric"
+            options={fabrics}
+            value={fabric}
+            onChange={(e) => setFabric(e.target.value)}
+          />
           <div>
-            <label className={labelCls} htmlFor="fabric">
-              Fabric
-            </label>
-            <select
-              id="fabric"
-              className={inputCls}
-              value={fabric}
-              onChange={(e) => setFabric(e.target.value)}
-            >
-              {fabrics.map((f) => (
-                <option key={f}>{f}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelCls} htmlFor="colourName">
-              Colour
-            </label>
-            <div className="flex gap-2">
-              <input
-                id="colourName"
-                className={inputCls}
-                value={colourName}
-                onChange={(e) => setColourName(e.target.value)}
-              />
-              <input
-                type="color"
-                aria-label="Colour picker"
-                className="h-10 w-12 rounded border"
-                value={colourHex}
-                onChange={(e) => setColourHex(e.target.value)}
-              />
-            </div>
+            <Input
+              label="Colour"
+              id="colourName"
+              value={colourName}
+              onChange={(e) => setColourName(e.target.value)}
+            />
+            <input
+              type="color"
+              aria-label="Colour picker"
+              className="mt-2 h-10 w-12 rounded border"
+              value={colourHex}
+              onChange={(e) => setColourHex(e.target.value)}
+            />
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className={labelCls} htmlFor="sleeve">
-              Sleeves
-            </label>
-            <select
-              id="sleeve"
-              className={inputCls}
-              value={sleeve}
-              onChange={(e) => setSleeve(e.target.value)}
-            >
-              {sleeves.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelCls} htmlFor="neckline">
-              Neckline
-            </label>
-            <select
-              id="neckline"
-              className={inputCls}
-              value={neckline}
-              onChange={(e) => setNeckline(e.target.value)}
-            >
-              {necklines.map((n) => (
-                <option key={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelCls} htmlFor="length">
-              Length
-            </label>
-            <select
-              id="length"
-              className={inputCls}
-              value={length}
-              onChange={(e) => setLength(e.target.value)}
-            >
-              {lengths.map((l) => (
-                <option key={l}>{l}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className={labelCls} htmlFor="special">
-            Special instructions
-          </label>
-          <textarea
-            id="special"
-            rows={3}
-            className={inputCls}
-            placeholder="Extra pockets, longer sleeves, matching cap..."
-            value={specialInstructions}
-            onChange={(e) => setSpecialInstructions(e.target.value)}
+          <Select
+            label="Sleeves"
+            id="sleeve"
+            options={sleeves}
+            value={sleeve}
+            onChange={(e) => setSleeve(e.target.value)}
+          />
+          <Select
+            label="Neckline"
+            id="neckline"
+            options={necklines}
+            value={neckline}
+            onChange={(e) => setNeckline(e.target.value)}
+          />
+          <Select
+            label="Length"
+            id="length"
+            options={lengths}
+            value={length}
+            onChange={(e) => setLength(e.target.value)}
           />
         </div>
 
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+        <Textarea
+          label="Special instructions"
+          id="special"
+          rows={3}
+          placeholder="Extra pockets, longer sleeves, matching cap..."
+          value={specialInstructions}
+          onChange={(e) => setSpecialInstructions(e.target.value)}
+        />
 
         <div className="flex flex-wrap gap-4">
-          <button
-            type="submit"
-            className="rounded-full bg-zinc-950 px-6 py-3 font-medium text-white dark:bg-zinc-50 dark:text-zinc-950"
-          >
-            Save Design
-          </button>
-          <Link
-            href="/projects"
-            className="rounded-full border border-zinc-300 px-6 py-3 font-medium dark:border-zinc-700"
-          >
+          <Button type="submit">Save Design</Button>
+          <Button href="/projects" variant="secondary">
             View My Projects
-          </Link>
+          </Button>
         </div>
       </form>
     </main>

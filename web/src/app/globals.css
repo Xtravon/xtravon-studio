@@ -12,6 +12,26 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Xtravon brand tokens */
+@theme {
+  --color-brand-50: #fbf4f6;
+  --color-brand-100: #f6e5ea;
+  --color-brand-200: #edc3d0;
+  --color-brand-300: #e098ae;
+  --color-brand-400: #cf6485;
+  --color-brand-500: #b43a63;
+  --color-brand-600: #9a274e;
+  --color-brand-700: #7f2041;
+  --color-brand-800: #651b36;
+  --color-brand-900: #4d1529;
+  --color-brand-950: #2c0c18;
+
+  --color-gold-300: #e7c65c;
+  --color-gold-400: #d9ab2e;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #a9861f;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
