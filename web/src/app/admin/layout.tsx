@@ -11,7 +11,7 @@ const adminNav = [
   { href: "/admin", label: "Payments" },
   { href: "/admin", label: "Delivery" },
   { href: "/admin", label: "Reports" },
-  { href: "/admin", label: "Settings" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminLayout({

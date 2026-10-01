@@ -1,4 +1,4 @@
-import { Badge, Card, EmptyState } from "@/components/ui";
+import { Badge, Button, Card, EmptyState } from "@/components/ui";
 
 export default function AdminDashboardPage() {
   return (
@@ -27,6 +27,11 @@ export default function AdminDashboardPage() {
             change requests, delivery, registrations.
           </p>
         </Card>
+      </div>
+      <div className="mt-8">
+        <Button href="/admin/settings" variant="secondary" size="sm">
+          Go to API key settings
+        </Button>
       </div>
       <div className="mt-8">
         <EmptyState
